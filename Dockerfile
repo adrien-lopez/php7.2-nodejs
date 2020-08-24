@@ -1,5 +1,6 @@
 FROM php:7.2-fpm
 
+# PHP ext
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
@@ -11,17 +12,18 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install ldap \
     && php -m
 
+# Node.js & Yarn
+RUN apt-get install curl -y \
+    && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+    && apt-get install nodejs -y \
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+    && apt-get update && apt-get install yarn -y \
+    && yarn -v
 
-#    && pecl install json \
-#    && docker-php-ext-enable json
-
-# Node.js
-RUN apt-get install curl -y
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt-get install nodejs -y
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt-get install yarn -y
-RUN yarn -v
+# Composer
+RUN curl -s https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer \
+    && composer
 
 CMD bash

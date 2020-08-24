@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y \
         libldap2-dev \
         libpq-dev \
         libxml2-dev \
+        libmagickwand-dev --no-install-recommends \
+        zlib1g-dev \
+        libzip-dev \
     && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
@@ -15,6 +18,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo pdo_pgsql pgsql \
     && docker-php-ext-install soap \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick \
+    && docker-php-ext-install zip \
     && php -m
 
 # Node.js & Yarn
